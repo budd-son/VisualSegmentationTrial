@@ -25,7 +25,7 @@
    - новый шот сравнивается с последними `lookback` шотами текущей группы;
    - если максимум сходства ≥ порога — присоединяется;
    - иначе группа закрывается (при условии, что её длительность ≥ `min_duration`).
-4. Для **HSV** порог фиксированный; для **CLIP/DINOv2** — **адаптивный** (`mean − k·std` по парам соседних шотов), потому что косинус между эмбеддингами лежит в узком диапазоне и абсолютный порог не работает.
+4. Для **HSV** порог фиксированный; для **CLIP/DINOv2** — **адаптивный** (`mean − k·std` по парам соседних шотов).
 5. Результат сохраняется в `data/result_<method>/<имя>_data.csv`.
 
 ## Требования
@@ -39,13 +39,21 @@
 pip install -r requirements.txt
 ```
 
+Изолированное окружение:
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+# source .venv/bin/activate   # Linux/Mac
+pip install -r requirements.txt
+```
 
 **Первый запуск CLIP/DINOv2** скачает веса (~350 МБ каждая) из HuggingFace в `~/.cache/huggingface/`. Нужен интернет.
 
 ## Подготовка данных
 
-1. Положить видеофрагменты в `data/raw/`. Поддерживаются расширения: `.mp4`, `.mkv`, `.avi`, `.mov`, `.webm`, `.flv`.
-2. Положить ручную разметку в `data/ground_truth/<имя>.csv` в формате:
+1. Видеофрагменты → `data/raw/` (`.mp4`, `.mkv`, `.avi`, `.mov`, `.webm`, `.flv`).
+2. Ручная разметка → `data/ground_truth/<имя>.csv`:
 
 ```csv
 scene_id,start_sec,end_sec
@@ -55,7 +63,7 @@ scene_id,start_sec,end_sec
 
 Имя файла разметки должно **совпадать** с именем видео (без расширения).
 
-Пример структуры:
+Структура:
 
 ```
 .
@@ -83,11 +91,14 @@ scene_id,start_sec,end_sec
 # все три метода, все видео
 python src/main.py
 
-# только HSV
+# только HSV (быстро, без скачивания моделей)
 python src/main.py --methods hsv
 
-# только CLIP и DINOv2
-python src/main.py --methods clip dino
+# только CLIP
+python src/main.py --methods clip
+
+# только DINOv2 (медленно на CPU)
+python src/main.py --methods dino --limit 1
 
 # тест на первых 2 файлах
 python src/main.py --limit 2
@@ -131,7 +142,7 @@ signature:
   clip:
     frame_step: 30
   dino:
-    frame_step: 30
+    frame_step: 60      # DINOv2 без GPU — медленный; 60 = 1 кадр в 2 сек
 
 grouping:
   threshold:
@@ -149,10 +160,7 @@ logging:
 
 ## Формат вывода
 
-### Результаты сегментации — 
-`data/result_<method>/<имя>_data.csv`
-
-
+### Результаты сегментации — `data/result_<method>/<имя>_data.csv`
 
 ```csv
 scene_id,start_time,end_time,cuts
@@ -166,10 +174,10 @@ scene_id,start_time,end_time,cuts
 | `start_time`, `end_time` | границы сцены, сек |
 | `cuts` | количество шотов внутри сцены |
 
-### Оценка — `scripts/eval_all.py`
+### Оценка
 
 ```bash
-python scripts/eval_all.py
+python src/matches/ev_all.py
 ```
 
 Скрипт **автоматически находит** все папки `data/result_*/`, сравнивает их с `data/ground_truth/` и печатает таблицу:
@@ -184,15 +192,30 @@ pulpFiction              | P=… R=… F1=…      | P=… R=… F1=…      | P
 СРЕДНЕЕ                  | P=… R=… F1=…      | P=… R=… F1=…      | P=… R=… F1=…
 ```
 
-Метрики — **precision / recall / F1 по границам сцен** с допуском **±2 сек**. Границы — это времена `end_time` всех сцен, кроме последней (последняя — конец видео, не граница).
-
 ## Методика оценки
 
-- **Ground truth** — ручная разметка сцен по отрывкам. Точность разметки ±1–2 сек, что покрывается допуском ±2 сек.
-- **Prediction** — результат пайплайна для соответствующего метода.
-- **Сопоставление** — жадное: каждая предсказанная граница ищет ближайшую истинную в пределах допуска. Один-к-одному.
-- **TP / FP / FN** — стандартно: TP = совпавшая пара, FP = лишняя предсказанная, FN = пропущенная истинная.
+- **Ground truth** — ручная разметка сцен, `data/ground_truth/<имя>.csv`. Точность ±1–2 сек, покрывается допуском.
+- **Prediction** — `data/result_<method>/<имя>_data.csv`.
+- **Границы сцен** — время `end_time` всех сцен, кроме последней (последняя — конец видео).
+- **Сопоставление** — жадное: каждая предсказанная граница ищет ближайшую истинную в пределах допуска ±2 сек, один-к-одному. Логика в `src/matches/matches_bound.py` (класс `SceneEvaluator`).
 - **Precision** = TP / (TP + FP), **Recall** = TP / (TP + FN), **F1** = 2·P·R / (P + R).
+
+## Описание эксперимента
+
+**Данные:** 4 отрывка из фильмов, длительностью ~1–4 минуты.
+
+| Отрывок | Длительность | Сцен (ручная разметка) |
+|---|---|---|
+| Inglourious Basterds | ~53 сек | 2 |
+| Pulp Fiction | ~228 сек | 4 |
+| Snatch | ~137 сек | 3 |
+| Requiem for a Dream | ~125 сек | 4 |
+
+**Методы:** HSV-гистограмма, CLIP ViT-B/32, DINOv2-base.
+
+**Метрика:** precision / recall / F1 границ сцен с допуском ±2 сек.
+
+**Гиперпараметры:** для HSV — фиксированный порог 0.6; для CLIP/DINOv2 — адаптивный (`mean − k·std`, `k=1.0`); `lookback=5`, `min_duration=5.0`.
 
 ## Структура проекта
 
@@ -201,15 +224,13 @@ pulpFiction              | P=… R=… F1=…      | P=… R=… F1=…      | P
 ├── config.yaml
 ├── requirements.txt
 ├── README.md
+├── .gitignore
 ├── data/
 │   ├── raw/                        ← входные видео (в .gitignore)
 │   ├── ground_truth/               ← ручная разметка
 │   ├── result_hsv/                 ← результаты HSV
 │   ├── result_clip/                ← результаты CLIP
 │   └── result_dino/                ← результаты DINOv2
-├── scripts/
-│   ├── make_ground_truth.py        ← генерация CSV из разметки
-│   └── eval_all.py                 ← оценка по всем методам
 └── src/
     ├── main.py                     ← запускатор пайплайна
     ├── scene_detect.py             ← PySceneDetect
@@ -220,10 +241,10 @@ pulpFiction              | P=… R=… F1=…      | P=… R=… F1=…      | P
     │   ├── shot_signature.py       ← единый интерфейс
     │   ├── similarity.py           ← метрики сходства
     │   └── group_by_hist.py        ← группировка шотов в сцены
-    ├── eval/
-    │   └── evaluator.py            ← SceneEvaluator
+    ├── matches/
+    │   ├── ev_all.py               ← сводная оценка по всем методам
+    │   └── matches_bound.py        ← SceneEvaluator
     └── utils/
         ├── config.py               ← загрузка config.yaml
         └── io_util.py              ← сохранение CSV
 ```
-
