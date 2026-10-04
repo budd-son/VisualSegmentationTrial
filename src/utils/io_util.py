@@ -1,6 +1,5 @@
 import csv
 import os
-import numpy as np
 
 
 def ensure_dir(path):
@@ -14,12 +13,12 @@ def scenes_to_rows(scenes):
             "scene_id": i,
             "start_time": round(sc["start_time"], 3),
             "end_time": round(sc["end_time"], 3),
-            "cuts": sc["cuts"]
+            "cuts": sc["cuts"],
         })
     return rows
 
 
-def save_scenes(scenes, csv_path, npy_path=None):
+def save_scenes(scenes, csv_path):
     if not scenes:
         print(f"[save_scenes] пусто, ничего не сохраняю: {csv_path}")
         return
@@ -30,7 +29,3 @@ def save_scenes(scenes, csv_path, npy_path=None):
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
-
-    if npy_path:
-        sigs = np.stack([sc["signature"] for sc in scenes], axis=0)
-        np.save(npy_path, sigs)

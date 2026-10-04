@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# PyCharm / IDE
+.idea/
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Данные (видео и результаты — слишком тяжёлые для git)
+data/raw/*
+!data/raw/.gitkeep
+
+data/result_hsv/*
+!data/result_hsv/.gitkeep
+data/result_clip/*
+!data/result_clip/.gitkeep
+data/result_dino/*
+!data/result_dino/.gitkeep
+
+data/ground_truth/*
+!data/ground_truth/.gitkeep
+
+# Модели и кеши
+*.safetensors
+*.ckpt
+*.pth
+.cache/
+
+# ОС
+.DS_Store
+Thumbs.db
