@@ -1,0 +1,30 @@
+# Конфиг пайплайна сегментации сцен.
+# Значения можно переопределить через CLI (--threshold, --limit и т.п.)
+
+paths:
+  raw: data/raw
+  out: data/result_hist
+
+video_exts:
+  - .mp4
+  - .mkv
+  - .avi
+  - .mov
+  - .webm
+  - .flv
+
+signature:
+  scale: 0.5           # уменьшение кадра перед HSV
+  frame_step: 5        # брать каждый N-й кадр внутри шота
+  h_bins: 8            # бинов по Hue (0..180 в OpenCV)
+  s_bins: 8            # бинов по Saturation
+  v_bins: 8            # бинов по Value
+
+grouping:
+  threshold: 0.6       # порог сходства гистограмм (0..1)
+  lookback: 5          # сколько последних шотов группы сравнивать
+  min_duration: 2.0    # минимальная длительность сцены (в секундах)
+
+logging:
+  level: INFO
+  file: null           # если указать путь — писать лог и туда
