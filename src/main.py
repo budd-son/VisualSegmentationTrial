@@ -27,6 +27,20 @@ def setup_logging(level="INFO", file_path=None):
     )
 
 
+def _is_valid_signature(sig, method):
+    """Проверка, что подпись шота не пустая.
+
+    HSV — вектор-гистограмма, проверяем сумму.
+    CLIP/DINO — список эмбеддингов, проверяем, что хотя бы один не нулевой.
+    """
+    if method == "hsv":
+        return float(np.asarray(sig).sum()) > 1e-6
+    # clip / dino
+    if not sig:
+        return False
+    return any(float(np.linalg.norm(e)) > 1e-6 for e in sig)
+
+
 def process_one(video_path, out_dir, cfg, method="hsv"):
     stem = Path(video_path).stem
     csv_path = Path(out_dir) / f"{stem}_data.csv"
@@ -57,28 +71,33 @@ def process_one(video_path, out_dir, cfg, method="hsv"):
 
     shots_with_sigs = shot_signature(video_path, shots, method=method, **sig_kwargs)
     shots_with_sigs = [s for s in shots_with_sigs
-                       if float(np.linalg.norm(s["signature"])) > 1e-6]
+                       if _is_valid_signature(s["signature"], method)]
     if not shots_with_sigs:
         print(f"[skip] {video_path}: пустые подписи")
         return False
 
     if method == "hsv":
         threshold = cfg.grouping.threshold.hsv
-    else:
-        threshold = None
+    elif method == "clip":
+        threshold = cfg.grouping.threshold.clip
+    elif method == "dino":
+        threshold = cfg.grouping.threshold.dino
+
     print(f"[debug] method={method}, threshold={threshold}")
+
     scenes = group_shots_by_hist(
         shots_with_sigs,
         threshold=threshold,
         lookback=cfg.grouping.lookback,
         min_duration=cfg.grouping.min_duration,
         method=method,
-        k=cfg.grouping.k,  # добавим в конфиг
+        k=cfg.grouping.k,
     )
 
     save_scenes(scenes, str(csv_path))
     print(f"[ok] {stem} ({method}): {len(scenes)} сцен → {csv_path.name}")
     return True
+
 
 def main():
     parser = argparse.ArgumentParser()

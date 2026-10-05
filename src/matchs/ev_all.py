@@ -2,15 +2,14 @@
 import sys
 from pathlib import Path
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
+
 from src.matchs.matchs_bound import SceneEvaluator
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-
-
-def discover_methods(data_dir="data"):
-    """Находит все папки result_* → {method: path}."""
-    data_dir = Path(data_dir)
+def discover_methods(data_dir: Path):
+    """Находит все папки result_* в data/ → {method: path}."""
     methods = {}
     for p in sorted(data_dir.glob("result_*")):
         if p.is_dir():
@@ -20,22 +19,23 @@ def discover_methods(data_dir="data"):
 
 
 def main():
-    gt_dir = "data/ground_truth"
+    data_dir = PROJECT_ROOT / "data"
+    gt_dir = str(data_dir / "ground_truth")
     tolerance = 2.0
 
-    methods = discover_methods("data")
+    methods = discover_methods(data_dir)
     if not methods:
-        print("[skip] нет папок data/result_*")
+        print(f"[skip] нет папок result_* в {data_dir}")
         return
 
     print(f"Найдены методы: {list(methods.keys())}\n")
+    print(f"GT: {gt_dir}\n")
 
     ev = SceneEvaluator(tolerance=tolerance)
     all_results = {}
     for method, pred_dir in methods.items():
         all_results[method] = ev.evaluate_all(gt_dir=gt_dir, pred_dir=pred_dir)
 
-    # собираем все видео
     videos = set()
     for r in all_results.values():
         videos.update(r.keys())

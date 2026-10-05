@@ -35,13 +35,9 @@ def frame_clip_signature(frame_bgr):
     return emb.squeeze(0).cpu().numpy().astype(np.float32)
 
 
-def shot_clip_signature(video_path, shots,
-                        frame_step=15,   # CLIP тяжёлый, берём реже
-                        scale=1.0):
+def shot_clip_signature(video_path, shots, frame_step=30):
+    """Возвращает СПИСОК эмбеддингов на шот (не усредняет)."""
     cap = cv2.VideoCapture(str(video_path))
-    if not cap.isOpened():
-        raise SystemExit(f"Cannot open {video_path}")
-
     fps = cap.get(cv2.CAP_PROP_FPS) or 30
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     result = []
@@ -50,27 +46,21 @@ def shot_clip_signature(video_path, shots,
         start_f = max(0, int(round(shot["start_time"] * fps)))
         end_f = min(total_frames, int(round(shot["end_time"] * fps)))
 
-        embs = []
-        for f in range(start_f, end_f, frame_step):
-            cap.set(cv2.CAP_PROP_POS_FRAMES, f)
-            ret, frame = cap.read()
-            if not ret:
-                continue
-            if scale != 1.0:
-                frame = cv2.resize(frame, None, fx=scale, fy=scale,
-                                   interpolation=cv2.INTER_AREA)
-            embs.append(frame_clip_signature(frame))
-
-        if embs:
-            signature = np.mean(np.stack(embs, axis=0), axis=0)
-            # повторно нормируем после усреднения
-            n = np.linalg.norm(signature)
-            if n > 1e-9:
-                signature = signature / n
+        L = end_f - start_f
+        if L <= 0:
+            embs = []
         else:
-            signature = np.zeros(512, dtype=np.float32)
+            # 3 кадра: 25%, 50%, 75%
+            positions = [start_f + L // 4, start_f + L // 2, start_f + 3 * L // 4]
+            embs = []
+            for f in positions:
+                cap.set(cv2.CAP_PROP_POS_FRAMES, f)
+                ret, frame = cap.read()
+                if not ret:
+                    continue
+                embs.append(frame_clip_signature(frame))
 
-        result.append({**shot, "signature": signature})
+        result.append({**shot, "signature": embs})   # список, не вектор
 
     cap.release()
     return result

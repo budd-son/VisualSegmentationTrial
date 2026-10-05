@@ -17,15 +17,16 @@ signature:
     s_bins: 8
     v_bins: 8
   clip:
-    frame_step: 15      # CLIP тяжёлый, берём реже
+    frame_step: 10      # CLIP тяжёлый, берём реже
   dino:
-    frame_step: 15
+    frame_step: 10
 
 grouping:
   threshold:
     hsv: 0.6
-    clip: 0.75           # не используем теперь
-    dino: 0.75
+    clip: 0.85
+    dino: 0.85
+
 
   lookback: 5
   min_duration: 5.0
