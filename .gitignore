@@ -18,17 +18,7 @@ env/
 
 # Данные (видео и результаты — слишком тяжёлые для git)
 data/raw/*
-!data/raw/.gitkeep
 
-data/result_hsv/*
-!data/result_hsv/.gitkeep
-data/result_clip/*
-!data/result_clip/.gitkeep
-data/result_dino/*
-!data/result_dino/.gitkeep
-
-data/ground_truth/*
-!data/ground_truth/.gitkeep
 
 # Модели и кеши
 *.safetensors
