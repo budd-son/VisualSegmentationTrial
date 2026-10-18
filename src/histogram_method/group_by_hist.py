@@ -1,36 +1,5 @@
 import numpy as np
-
 from src.histogram_method.similarity import similarity
-
-
-def compute_adaptive_threshold(shots_with_sigs, method, k=1.0):
-    """
-    Порог = mean(sim между соседними шотами) - k * std(...).
-    k=0.5 — мягкий (мало границ),
-    k=1.0 — средний,
-    k=1.5 — жёсткий (много границ).
-    """
-    sims = []
-    for i in range(len(shots_with_sigs) - 1):
-        s = similarity(
-            shots_with_sigs[i]["signature"],
-            shots_with_sigs[i + 1]["signature"],
-            method=method,
-        )
-        sims.append(s)
-
-    if not sims:
-        return 0.0
-
-    sims = np.array(sims, dtype=np.float32)
-    mean_sim = float(sims.mean())
-    std_sim = float(sims.std())
-    thr = mean_sim - k * std_sim
-
-    print(f"[{method}] adaptive threshold: mean={mean_sim:.3f}, "
-          f"std={std_sim:.3f}, k={k} → thr={thr:.3f}")
-
-    return thr
 
 
 def _make_scene(shots):
@@ -44,19 +13,46 @@ def _make_scene(shots):
         "cuts": len(shots),
     }
 
+def compute_adaptive_threshold(shots_with_sigs, method, k=1.0, thr_mode="std"):
+
+    sims = []
+    for i in range(len(shots_with_sigs) - 1):
+        s = similarity(
+            shots_with_sigs[i]["signature"],
+            shots_with_sigs[i + 1]["signature"],
+            method=method,
+        )
+        sims.append(s)
+
+    if not sims:
+        return 0.0
+
+    sims = np.array(sims, dtype=np.float32)
+
+    if thr_mode == "percentile":
+        thr = float(np.percentile(sims, k))
+        print(f"[{method}] threshold (percentile k={k}%): thr={thr:.3f} "
+              f"(mean={sims.mean():.3f}, std={sims.std():.3f})")
+    else:  # std
+        mean_sim = float(sims.mean())
+        std_sim = float(sims.std())
+        thr = mean_sim - k * std_sim
+        print(f"[{method}] threshold (mean - {k}*std): thr={thr:.3f} "
+              f"(mean={mean_sim:.3f}, std={std_sim:.3f})")
+
+    return thr
+
 
 def group_shots_by_hist(shots_with_sigs,
                         threshold=None,
                         lookback=5,
                         min_duration=2.0,
                         method="hsv",
-                        k=1.0):
-    """
-    threshold: если None → адаптивный порог по соседним шотам.
-    k: коэффициент для адаптивного порога.
-    """
+                        k=1.0,
+                        thr_mode="std"):  # <--- ДОБАВИЛИ ПАРАМЕТР
+
     if threshold is None:
-        threshold = compute_adaptive_threshold(shots_with_sigs, method, k=k)
+        threshold = compute_adaptive_threshold(shots_with_sigs, method, k=k, thr_mode=thr_mode)
 
     scenes = []
     current = []

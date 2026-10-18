@@ -1,59 +1,87 @@
-import numpy as np
+import csv
 from pathlib import Path
 
-
-def _summ(per_video, ev):
-    TP = sum(v["tp"] for v in per_video.values())
-    FP = sum(v["fp"] for v in per_video.values())
-    FN = sum(v["fn"] for v in per_video.values())
-    p, r, f1 = ev._prf(TP, FP, FN)
-    f1s = [v["f1"] for v in per_video.values()]
-    return {
-        "TP": TP, "FP": FP, "FN": FN,
-        "n_gt_total": sum(v["gt_bounds"] for v in per_video.values()),
-        "precision_micro": p, "recall_micro": r, "f1_micro": f1,
-        "f1_macro": float(np.mean(f1s)) if f1s else 0.0,
-        "f1_std":   float(np.std(f1s))  if f1s else 0.0,
-        "n_videos": len(per_video),
-    }
+import numpy as np
 
 
-def baseline_every_cut(gt_dir, cuts_dir, ev):
-    """Все склейки = границы сцен."""
-    gt_dir = Path(gt_dir)
-    per_video = {}
-    for gt_path in sorted(gt_dir.glob("*.csv")):
-        name = gt_path.stem
-        cuts = ev._load_cuts(cuts_dir, name)
-        gt_bounds = ev._read_boundaries(str(gt_path))
-        pred = list(cuts)
-        tp, fp, fn = ev._match(pred, gt_bounds, cuts)
-        p, r, f1 = ev._prf(tp, fp, fn)
-        per_video[name] = {
-            "gt_bounds": len(gt_bounds), "pred_bounds": len(pred),
-            "tp": tp, "fp": fp, "fn": fn,
-            "precision": p, "recall": r, "f1": f1,
-        }
-    return per_video, _summ(per_video, ev)
+def load_shots(path: Path):
+    with path.open(newline="", encoding="utf-8") as f:
+        rows = list(csv.reader(f))
+
+    # Пропускаем заголовок, если он есть (например, start_time,end_time)
+    if rows:
+        try:
+            float(rows[0][0])
+        except ValueError:
+            rows = rows[1:]
+
+    return [(float(r[0]), float(r[1])) for r in rows]
 
 
-def baseline_every_n_seconds(gt_dir, cuts_dir, ev, N=30):
-    """Регулярная сетка каждые N секунд от начала видео."""
-    gt_dir = Path(gt_dir)
-    per_video = {}
-    for gt_path in sorted(gt_dir.glob("*.csv")):
-        name = gt_path.stem
-        cuts = ev._load_cuts(cuts_dir, name)
-        if not cuts:
+def all_cuts(shots, duration):
+    return [a for a, _ in shots[1:]]
+
+
+def grid(shots, duration, step=30.0):
+    return [float(t) for t in np.arange(step, duration, step)]
+
+
+def boundaries_to_scenes(boundaries, duration):
+    pts = [0.0] + sorted(boundaries) + [duration]
+    return [{"scene_id": i, "start_time": a, "end_time": b, "cuts": 1}
+            for i, (a, b) in enumerate(zip(pts, pts[1:])) if b > a]
+
+
+def write_scenes(path, scenes):
+    with path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=["scene_id", "start_time", "end_time", "cuts"])
+        w.writeheader()
+        w.writerows(scenes)
+
+
+def build(step=30.0):
+    # Автоматически находим корень проекта (папку, где лежит data)
+    root = Path(__file__).resolve().parent
+    while not (root / "data").is_dir() and root.parent != root:
+        root = root.parent
+
+    data = root / "data"
+    shots_dir, gt_dir = data / "shots", data / "ground_truth"
+
+    if not shots_dir.is_dir():
+        print(f"[build] нет {shots_dir}")
+        return 0
+
+    shot_files = sorted(shots_dir.glob("*_shots.csv"))
+    if not shot_files:
+        print(f"[build] нет *_shots.csv в {shots_dir}")
+        return 0
+
+    methods = {"allcuts": all_cuts, "grid": lambda s, d: grid(s, d, step)}
+    n = 0
+    for path in shot_files:
+        # Получаем чистое имя: fightClub_shots.csv -> fightClub
+        video = path.stem.replace("_shots", "")
+        try:
+            shots = load_shots(path)
+        except Exception as e:
+            print(f"[skip] {video}: ошибка чтения {e}")
             continue
-        duration = cuts[-1]
-        gt_bounds = ev._read_boundaries(str(gt_path))
-        pred = list(np.arange(N, duration, N))
-        tp, fp, fn = ev._match(pred, gt_bounds, cuts)
-        p, r, f1 = ev._prf(tp, fp, fn)
-        per_video[name] = {
-            "gt_bounds": len(gt_bounds), "pred_bounds": len(pred),
-            "tp": tp, "fp": fp, "fn": fn,
-            "precision": p, "recall": r, "f1": f1,
-        }
-    return per_video, _summ(per_video, ev)
+
+        if len(shots) < 2:
+            print(f"[skip] {video}: шотов {len(shots)}")
+            continue
+
+        duration = shots[-1][1]
+        for name, fn in methods.items():
+            out = data / f"result_{name}"
+            out.mkdir(parents=True, exist_ok=True)
+            scenes = boundaries_to_scenes(fn(shots, duration), duration)
+            write_scenes(out / f"{video}_data.csv", scenes)
+            n += 1
+
+    return n
+
+
+
+

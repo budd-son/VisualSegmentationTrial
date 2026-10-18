@@ -8,3 +8,4 @@ open_clip_torch>=2.20
 transformers>=4.35
 pillow>=10.0
 tqdm>=4.65
+av
