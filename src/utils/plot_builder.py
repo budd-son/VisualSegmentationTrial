@@ -27,6 +27,12 @@ baselines = {
     "All Cuts": {"p": 0.19, "r": 1.00, "marker": "o", "color": "coral"},
     "Grid 30s": {"p": 0.52, "r": 0.43, "marker": "s", "color": "tomato"},
 }
+# --- 5. КОМБИНАЦИИ МЕТОДОВ (Ансамбли) ---
+our_methods_ensemble = {
+    "HSV + DINO (OR)": {"p": 0.68, "r": 0.86, "color": "purple"},
+    "HSV + CLIP (OR)": {"p": 0.58, "r": 0.91, "color": "mediumorchid"},
+    "HSV + DINO (AND)":{"p": 0.67, "r": 0.69, "color": "orchid"},
+}
 
 
 def plot_pr_curve():
@@ -73,6 +79,13 @@ def plot_pr_curve():
     for name, data in baselines.items():
         ax.scatter(data['r'], data['p'], color=data['color'], s=100, marker=data['marker'],
                    edgecolor='black', linewidth=0.8, zorder=3,
+                   label='Baselines' if name == "All Cuts" else "")
+        ax.annotate(name, (data['r'], data['p']), xytext=(5, 5), textcoords='offset points',
+                    fontsize=10, color='black', zorder=6)
+    # 5. Combine
+    for name, data in our_methods_ensemble.items():
+        ax.scatter(data['r'], data['p'], color=data['color'], s=100, marker="h",
+                   edgecolor='green', linewidth=0.8, zorder=3,
                    label='Baselines' if name == "All Cuts" else "")
         ax.annotate(name, (data['r'], data['p']), xytext=(5, 5), textcoords='offset points',
                     fontsize=10, color='black', zorder=6)
