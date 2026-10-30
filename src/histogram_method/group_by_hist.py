@@ -13,8 +13,8 @@ def _make_scene(shots):
         "cuts": len(shots),
     }
 
-def compute_adaptive_threshold(shots_with_sigs, method, k=1.0, thr_mode="std"):
 
+def compute_adaptive_threshold(shots_with_sigs, method, k=1.0, thr_mode="std"):
     sims = []
     for i in range(len(shots_with_sigs) - 1):
         s = similarity(
@@ -47,10 +47,10 @@ def group_shots_by_hist(shots_with_sigs,
                         threshold=None,
                         lookback=5,
                         min_duration=2.0,
+                        min_shots=2,  # <--- Правило: мин. 2 шота
                         method="hsv",
                         k=1.0,
-                        thr_mode="std"):  # <--- ДОБАВИЛИ ПАРАМЕТР
-
+                        thr_mode="std"):
     if threshold is None:
         threshold = compute_adaptive_threshold(shots_with_sigs, method, k=k, thr_mode=thr_mode)
 
@@ -72,12 +72,17 @@ def group_shots_by_hist(shots_with_sigs,
             current.append(shot)
             continue
 
+        # Если сходство низкое, мы хотим закрыть сцену.
+        # Но проверяем ограничения: длительность и количество шотов.
         group_duration = current[-1]["end_time"] - current[0]["start_time"]
-        if group_duration < min_duration:
-            current.append(shot)
+
+        if group_duration < min_duration or len(current) < min_shots:
+            current.append(shot)  # Принудительно склеиваем
         else:
             scenes.append(_make_scene(current))
             current = [shot]
+
+        # УБРАН ЛИШНИЙ ДУБЛИРУЮЩИЙСЯ БЛОК if/else
 
     if current:
         scenes.append(_make_scene(current))
