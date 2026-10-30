@@ -1,41 +1,50 @@
+import sys
 import matplotlib.pyplot as plt
 import numpy as np
+from pathlib import Path
 
-# --- 1. ФИКСИРОВАННЫЕ МЕТОДЫ (Fixed) ---
-our_methods_fixed = {
-    "HSV (Fixed)": {"p": 0.62, "r": 0.86, "color": "dodgerblue"},
-    "CLIP (Fixed)": {"p": 0.50, "r": 1.00, "color": "blue"},
-    "DINOv2 (Fixed)": {"p": 0.61, "r": 0.86, "color": "navy"},
-}
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT))
 
-# --- 2. ПЕРЦЕНТИЛЬНЫЕ МЕТОДЫ (Percentile) ---
-our_methods_pct = {
-    "HSV (Pct)": {"p": 0.71, "r": 0.49, "color": "lightskyblue"},
-    "CLIP (Pct)": {"p": 0.91, "r": 0.29, "color": "skyblue"},
-    "DINOv2 (Pct)": {"p": 0.74, "r": 0.40, "color": "lightblue"},
-}
-
-# --- 3. МЕТОДЫ С РЕЧЕВЫМ ФИЛЬТРОМ (Speech) ---
-our_methods_speech = {
-    "HSV + Speech": {"p": 0.75, "r": 0.43, "color": "limegreen"},
-    "DINOv2 + Speech": {"p": 0.71, "r": 0.49, "color": "lightgreen"},
-    "CLIP + Speech": {"p": 0.52, "r": 0.49, "color": "palegreen"},
-}
-
-# --- 4. БАЗОВЫЕ ЛИНИИ (Baselines) ---
-baselines = {
-    "All Cuts": {"p": 0.19, "r": 1.00, "marker": "o", "color": "coral"},
-    "Grid 30s": {"p": 0.52, "r": 0.43, "marker": "s", "color": "tomato"},
-}
-# --- 5. КОМБИНАЦИИ МЕТОДОВ (Ансамбли) ---
-our_methods_ensemble = {
-    "HSV + DINO (OR)": {"p": 0.68, "r": 0.86, "color": "purple"},
-    "HSV + CLIP (OR)": {"p": 0.58, "r": 0.91, "color": "mediumorchid"},
-    "HSV + DINO (AND)":{"p": 0.67, "r": 0.69, "color": "orchid"},
-}
+from src.matchs.evaluate import get_all_metrics
 
 
 def plot_pr_curve():
+    # 1. Получаем свежие цифры для строгой метрики (допуск 0)
+    metrics = get_all_metrics(tolerance=0)
+
+    # 2. Настраиваем визуал (какой метод как рисуем)
+    # Формат: "имя_метода": (маркер, цвет, размер)
+    styles = {
+        # Наши методы
+        "hsv": ('*', 'dodgerblue', 200),
+        "clip": ('*', 'blue', 200),
+        "dino": ('*', 'navy', 200),
+
+        # Комбинации
+        "hsv_dino_or": ('p', 'purple', 120),
+        "hsv_clip_or": ('p', 'mediumorchid', 120),
+        "hsv_dino_and": ('p', 'orchid', 120),
+
+        # Речь
+        "hsv_speech": ('D', 'limegreen', 100),
+        "clip_speech": ('D', 'palegreen', 100),
+        "dino_speech": ('D', 'lightgreen', 100),
+
+        # Baseline
+        "allcuts": ('o', 'coral', 100),
+        "grid": ('s', 'tomato', 100),
+    }
+
+    # Красивые имена для легенды и подписей
+    nice_names = {
+        "hsv": "HSV (Fixed)", "clip": "CLIP (Fixed)", "dino": "DINOv2 (Fixed)",
+        "hsv_dino_or": "HSV + DINO (OR)", "hsv_clip_or": "HSV + CLIP (OR)",
+        "hsv_dino_and": "HSV + DINO (AND)",
+        "hsv_speech": "HSV + Speech", "clip_speech": "CLIP + Speech", "dino_speech": "DINOv2 + Speech",
+        "allcuts": "All Cuts", "grid": "Grid 30s"
+    }
+
     fig, ax = plt.subplots(figsize=(12, 8))
 
     # Рисуем изолинии F1
@@ -51,59 +60,45 @@ def plot_pr_curve():
         if len(idx) > 0:
             ax.text(0.88, p_vals[idx[-1]], f'F1 = {f1}', color='gray', fontsize=9, verticalalignment='bottom')
 
-    # 1. Fixed (Звезды)
-    for name, data in our_methods_fixed.items():
-        ax.scatter(data['r'], data['p'], color=data['color'], s=200, marker='*',
-                   edgecolor='black', linewidth=0.8, zorder=5,
-                   label='Fixed' if name == "HSV (Fixed)" else "")
-        ax.annotate(name, (data['r'], data['p']), xytext=(8, 8), textcoords='offset points',
-                    fontsize=11, fontweight='bold', color='black', zorder=6)
+    # Рисуем точки
+    for method_name, data in metrics.items():
+        if method_name not in styles:
+            continue  # Пропускаем, если метод не задан в styles (например, перцентиль, если его папки нет)
 
-    # 2. Percentile (Треугольники)
-    for name, data in our_methods_pct.items():
-        ax.scatter(data['r'], data['p'], color=data['color'], s=100, marker='^',
-                   edgecolor='gray', linewidth=0.8, zorder=4,
-                   label='Percentile' if name == "HSV (Pct)" else "")
-        ax.annotate(name, (data['r'], data['p']), xytext=(5, -15), textcoords='offset points',
-                    fontsize=9, color='dimgray', zorder=6)
+        marker, color, size = styles[method_name]
+        label = nice_names.get(method_name, method_name)
 
-    # 3. Speech (Ромбы)
-    for name, data in our_methods_speech.items():
-        ax.scatter(data['r'], data['p'], color=data['color'], s=100, marker='D',
-                   edgecolor='black', linewidth=0.8, zorder=4,
-                   label='Fixed + Speech' if name == "HSV + Speech" else "")
-        ax.annotate(name, (data['r'], data['p']), xytext=(-10, 12), textcoords='offset points',
-                    fontsize=9, fontweight='bold', color='darkgreen', zorder=6)
+        # Рисуем точку
+        ax.scatter(data['r'], data['p'], color=color, s=size, marker=marker,
+                   edgecolor='black', linewidth=0.8, zorder=5)
 
-    # 4. Baselines (Квадраты и круги)
-    for name, data in baselines.items():
-        ax.scatter(data['r'], data['p'], color=data['color'], s=100, marker=data['marker'],
-                   edgecolor='black', linewidth=0.8, zorder=3,
-                   label='Baselines' if name == "All Cuts" else "")
-        ax.annotate(name, (data['r'], data['p']), xytext=(5, 5), textcoords='offset points',
-                    fontsize=10, color='black', zorder=6)
-    # 5. Combine
-    for name, data in our_methods_ensemble.items():
-        ax.scatter(data['r'], data['p'], color=data['color'], s=100, marker="h",
-                   edgecolor='green', linewidth=0.8, zorder=3,
-                   label='Baselines' if name == "All Cuts" else "")
-        ax.annotate(name, (data['r'], data['p']), xytext=(5, 5), textcoords='offset points',
-                    fontsize=10, color='black', zorder=6)
+        # Подписываем
+        # Для звезд смещаем вправо-вверх, для остальных вправо-вниз (чтобы не перекрывались)
+        offset = (8, 8) if marker == '*' else (5, -12)
+        ax.annotate(label, (data['r'], data['p']), xytext=offset, textcoords='offset points',
+                    fontsize=10, fontweight='bold' if marker == '*' else 'normal',
+                    color='black', zorder=6)
+
+    # Добавляем фиктивные элементы в легенду (так как мы рисуем циклом, метки дублируются)
+    from matplotlib.lines import Line2D
+    legend_elements = [
+        Line2D([0], [0], marker='*', color='w', label='Fixed', markerfacecolor='gray', markersize=15),
+        Line2D([0], [0], marker='p', color='w', label='Ensemble (OR/AND)', markerfacecolor='gray', markersize=12),
+        Line2D([0], [0], marker='D', color='w', label='Speech Filter', markerfacecolor='gray', markersize=10),
+        Line2D([0], [0], marker='o', color='w', label='Baselines', markerfacecolor='gray', markersize=10),
+    ]
+    ax.legend(handles=legend_elements, loc='lower left', fontsize=11, framealpha=0.9)
 
     ax.set_xlim(0.0, 1.05)
     ax.set_ylim(0.0, 0.85)
-    ax.set_xlabel('Recall (полнота)', fontsize=14)
+    ax.set_xlabel('Recall (полнота) — Допуск 0', fontsize=14)
     ax.set_ylabel('Precision (точность)', fontsize=14)
-    ax.set_title('PR-кривая: Сравнение методов сегментации сцен', fontsize=16, fontweight='bold', pad=15)
+    ax.set_title('PR-кривая (строгая метрика): Сравнение методов', fontsize=16, fontweight='bold', pad=15)
     ax.grid(True, alpha=0.3, zorder=0)
-
-    handles, labels = ax.get_legend_handles_labels()
-    by_label = dict(zip(labels, handles))
-    ax.legend(by_label.values(), by_label.keys(), loc='lower left', fontsize=11, framealpha=0.9)
 
     plt.tight_layout()
     plt.savefig("pr_curve_comparison.png", dpi=300)
-    print("График сохранен: pr_curve_comparison.png")
+    print("График сохранен: pr_curve_comparison.png (свежие данные, допуск 0)")
     plt.show()
 
 
