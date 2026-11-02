@@ -187,7 +187,7 @@ def run_evaluation(tolerance, gt_dir, methods, shots_dir):
 def main():
     data_dir = PROJECT_ROOT / "data"
     gt_dir = str(data_dir / "ground_truth")
-    shots_dir = str(data_dir / "shots")
+    shots_dir = str(data_dir / "old_shots")
 
     build()
     methods = discover_methods(data_dir)

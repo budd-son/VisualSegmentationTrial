@@ -1,14 +1,20 @@
 import argparse
 import csv
 import logging
+import os
 import sys
 import traceback
 from pathlib import Path
 
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+os.chdir(PROJECT_ROOT)
 sys.path.insert(0, str(PROJECT_ROOT))
 
+
 import numpy as np
+from src.histogram_method.centering import center_embeddings
+
 from src.histogram_method.shot_signature import shot_signature
 from src.histogram_method.group_by_hist import group_shots_by_hist
 from src.scene_detect import detect_scenes
@@ -19,6 +25,34 @@ from src.utils.io_util import save_scenes, ensure_dir
 DATA = PROJECT_ROOT / "data"
 SHOTS_DIR = DATA / "shots"
 
+
+def process_one(video_path, out_dir, cfg, method="hsv", mode="fixed", k_val=None, use_speech=False):
+    stem = Path(video_path).stem
+    csv_path = Path(out_dir) / f"{stem}_data.csv"
+
+    # --- НОВЫЙ БЛОК: сохраняем шоты в кэш ---
+    shots_dir = Path("data/shots")
+    shots_csv = shots_dir / f"{stem}_shots.csv"
+
+    if shots_csv.exists():
+        # Читаем из кэша
+        shots = []
+        with open(shots_csv, encoding="utf-8") as f:
+            for r in csv.DictReader(f):
+                shots.append({"start_time": float(r["start_time"]), "end_time": float(r["end_time"])})
+    else:
+        # Если нет — детектим и сохраняем
+        shots = detect_scenes(video_path)
+        if shots:
+            ensure_dir(shots_dir)
+            with open(shots_csv, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=["start_time", "end_time"])
+                writer.writeheader()
+                writer.writerows(shots)
+
+    if not shots:
+        print(f"[skip] {video_path}: шотов не найдено")
+        return False
 
 def setup_logging(level="INFO", file_path=None):
     handlers = [logging.StreamHandler()]
@@ -92,19 +126,20 @@ def process_one(video_path, out_dir, cfg, method="hsv", mode="fixed",
         k_val = cfg.grouping.k
 
     print(f"[debug] method={method}, mode={mode}, threshold={threshold}, k={k_val}")
+    shots_with_sigs = center_embeddings(shots_with_sigs, method)
 
     scenes = group_shots_by_hist(
         shots_with_sigs,
         threshold=threshold,
         lookback=cfg.grouping.lookback,
         min_duration=cfg.grouping.min_duration,
+        min_shots=2,  # <--- ДОБАВИТ
         method=method,
         k=k_val,
-        thr_mode=mode,
+        thr_mode=mode
     )
-
     save_scenes(scenes, str(csv_path))
-    print(f"[ok] {stem} ({method}): {len(scenes)} сцен → {csv_path.name}")
+    print(f"[ok] {stem} ({method}): {len(scenes)} сцен - {csv_path.name}")
 
     # Речевое ограничение: реплика через склейку запрещает границу.
     # Whisper запускается только если нет data/speech/<имя>_speech.csv.
@@ -114,7 +149,7 @@ def process_one(video_path, out_dir, cfg, method="hsv", mode="fixed",
         sp_dir = Path(out_dir).parent / f"result_{method}_speech"
         ensure_dir(sp_dir)
         save_scenes(scenes_sp, str(sp_dir / f"{stem}_data.csv"))
-        print(f"[ok] {stem} ({method}) + speech: {len(scenes_sp)} сцен "
+        print(f"[ok] {stem} ({method}) + _speech: {len(scenes_sp)} сцен "
               f"→ {sp_dir.name}/")
     return True
 
@@ -131,12 +166,13 @@ def main():
     parser.add_argument("--k", type=float, default=30.0,
                         help="Значение k (перцентиля) для режима percentile")
     parser.add_argument("--threshold", type=float, default=None,
-                        help="override threshold для ВСЕХ методов")
+                    help="override threshold для ВСЕХ методов")
+    parser.add_argument("--speech", action="store_true", help="Применить фильтр по речи")
     parser.add_argument("--lookback", type=int, default=None)
     parser.add_argument("--min-duration", type=float, default=None)
     parser.add_argument("--skip-existing", action="store_true")
     parser.add_argument("--limit", type=int, default=None)
-    parser.add_argument("--speech", action="store_true",
+    parser.add_argument("--_speech", action="store_true",
                         help="Применить речевое ограничение, результат в result_<метод>_speech")
     args = parser.parse_args()
 
@@ -169,7 +205,7 @@ def main():
         return
 
     print(f"Найдено {len(videos)} файлов, методы: {args.methods}, "
-          f"режим: {args.mode}, speech: {args.speech}")
+          f"режим: {args.mode}, _speech: {args.speech}")
 
     for method in args.methods:
         out_dir = DATA / f"result_{method}"

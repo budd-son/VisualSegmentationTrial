@@ -18,6 +18,7 @@ env/
 
 # Данные (видео и результаты — слишком тяжёлые для git)
 data/raw/*
+data/old/*
 
 
 # Модели и кеши
@@ -29,3 +30,19 @@ data/raw/*
 # ОС
 .DS_Store
 Thumbs.db
+
+# Кэши и промежуточные данные
+data/signatures_cache/
+data/old_signatures_cache/
+data/old_shots/
+data/shots/
+*.pkl
+*.csv
+*.mp4
+*.avi
+*.mkv
+*.mov
+
+# Но разрешаем коммитить разметку и итоговые предсказания
+!data/ground_truth/*.csv
+!data/result_*/*.csv

@@ -157,7 +157,7 @@ def run_cv(method, sigs_cache, videos, gt_dir, shots_dir, grid, thr_mode):
 def main():
     gt_dir = PROJECT_ROOT / "data" / "ground_truth"
     raw_dir = PROJECT_ROOT / CFG.paths.raw
-    shots_dir = PROJECT_ROOT / "data" / "shots"
+    shots_dir = PROJECT_ROOT / "data" / "old_shots"
     videos = sorted([p.stem for p in gt_dir.glob("*.csv")])
 
     for method in ["hsv", "clip", "dino"]:

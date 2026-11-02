@@ -42,12 +42,12 @@ def _is_valid_signature(sig, method):
 
 
 def _save_shots_once(shots, stem):
-    """Сохраняет шоты в data/shots/<stem>.csv (один раз на видео).
+    """Сохраняет шоты в data/old_shots/<stem>.csv (один раз на видео).
 
     save_scenes ожидает dict с ключами start_time/end_time/cuts,
     поэтому добавляем фиктивное поле cuts=1.
     """
-    shots_dir = Path("data/shots")
+    shots_dir = Path("data/old_shots")
     ensure_dir(str(shots_dir))
     shots_path = shots_dir / f"{stem}.csv"
 
@@ -63,7 +63,7 @@ def _save_shots_once(shots, stem):
         for s in shots
     ]
     save_scenes(shots_for_save, str(shots_path))
-    print(f"[shots] {stem}: {len(shots_for_save)} шотов → {shots_path}")
+    print(f"[old_shots] {stem}: {len(shots_for_save)} шотов → {shots_path}")
     return shots_path
 
 

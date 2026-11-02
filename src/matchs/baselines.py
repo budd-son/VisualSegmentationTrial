@@ -46,7 +46,7 @@ def build(step=30.0):
         root = root.parent
 
     data = root / "data"
-    shots_dir, gt_dir = data / "shots", data / "ground_truth"
+    shots_dir, gt_dir = data / "old_shots", data / "ground_truth"
 
     if not shots_dir.is_dir():
         print(f"[build] нет {shots_dir}")

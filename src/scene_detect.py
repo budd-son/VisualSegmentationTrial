@@ -8,7 +8,7 @@ from scenedetect import detect, ContentDetector
 logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-CACHE_DIR = PROJECT_ROOT / "data" / "shots"
+CACHE_DIR = PROJECT_ROOT / "data" / "old_shots"
 
 
 def _cache_path(video_path: str) -> Path:

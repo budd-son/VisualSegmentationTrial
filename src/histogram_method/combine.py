@@ -3,7 +3,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATA = PROJECT_ROOT / "data"
-SHOTS_DIR = DATA / "shots"
+SHOTS_DIR = DATA / "old_shots"
 GT_DIR = DATA / "ground_truth"
 
 
@@ -74,14 +74,14 @@ def save_boundaries(bounds, video_name, out_dir):
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"{video_name}_data.csv"
 
-    # Получаем длительность последней сцены из shots
+    # Получаем длительность последней сцены из old_shots
     shots = load_shots(video_name)
     duration = shots[-1] if shots else 0.0
     if not shots:
         return
 
     # Нам нужна длительность видео. Берем из GT или последнего шота
-    # Проще всего взять end_time последнего шота из файла shots
+    # Проще всего взять end_time последнего шота из файла old_shots
     shots_path = SHOTS_DIR / f"{video_name}_shots.csv"
     with open(shots_path, newline="", encoding="utf-8") as f:
         rows = list(csv.reader(f))
