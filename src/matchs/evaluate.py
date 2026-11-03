@@ -12,7 +12,7 @@ def get_all_metrics(tolerance=0):
     """Возвращает словарь {метод: {precision, recall, f1}} для всех папок result_*."""
     data_dir = PROJECT_ROOT / "data"
     gt_dir = str(data_dir / "ground_truth")
-    shots_dir = str(data_dir / "old_shots")
+    shots_dir = str(data_dir / "shots")
 
     # Ищем все папки result_*
     methods = {}

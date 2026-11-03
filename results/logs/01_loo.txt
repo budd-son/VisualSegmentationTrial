@@ -1,0 +1,43 @@
+
+========== LOO для HSV ==========
+  1               | thr=0.50 | TP=0 FP=1 FN=6
+  10              | thr=0.50 | TP=0 FP=0 FN=15
+  2               | thr=0.50 | TP=0 FP=1 FN=11
+  3               | thr=0.50 | TP=1 FP=3 FN=14
+  4               | thr=0.40 | TP=0 FP=0 FN=21
+  5               | thr=0.50 | TP=1 FP=1 FN=11
+  6               | thr=0.50 | TP=0 FP=0 FN=4
+  7               | thr=0.50 | TP=0 FP=0 FN=8
+  8               | thr=0.50 | TP=0 FP=0 FN=11
+  9               | thr=0.50 | TP=0 FP=0 FN=13
+
+ИТОГО (LOO): P=0.25 R=0.02 F1=0.03 | Средний порог: 0.49
+
+========== LOO для CLIP ==========
+  1               | thr=0.65 | TP=4 FP=35 FN=2
+  10              | thr=0.60 | TP=6 FP=6 FN=9
+  2               | thr=0.65 | TP=9 FP=17 FN=2
+  3               | thr=0.60 | TP=6 FP=32 FN=9
+  4               | thr=0.65 | TP=11 FP=29 FN=10
+  5               | thr=0.65 | TP=2 FP=5 FN=10
+  6               | thr=0.65 | TP=4 FP=18 FN=0
+  7               | thr=0.65 | TP=6 FP=36 FN=2
+  8               | thr=0.60 | TP=6 FP=44 FN=5
+  9               | thr=0.65 | TP=8 FP=5 FN=5
+
+ИТОГО (LOO): P=0.21 R=0.53 F1=0.31 | Средний порог: 0.64
+
+========== LOO для DINO ==========
+  1               | thr=0.45 | TP=6 FP=27 FN=0
+  10              | thr=0.45 | TP=6 FP=6 FN=9
+  2               | thr=0.45 | TP=7 FP=15 FN=4
+  3               | thr=0.45 | TP=7 FP=22 FN=8
+  4               | thr=0.45 | TP=9 FP=18 FN=12
+  5               | thr=0.45 | TP=3 FP=2 FN=9
+  6               | thr=0.45 | TP=3 FP=5 FN=1
+  7               | thr=0.40 | TP=4 FP=25 FN=4
+  8               | thr=0.45 | TP=4 FP=43 FN=7
+  9               | thr=0.45 | TP=8 FP=3 FN=5
+
+ИТОГО (LOO): P=0.26 R=0.49 F1=0.34 | Средний порог: 0.45
+[0m

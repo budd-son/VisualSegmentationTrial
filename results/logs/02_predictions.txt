@@ -1,0 +1,34 @@
+
+===== HSV =====
+[1/10] 1.mp4
+[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
+[debug] video_path = data\raw\1.mp4
+[debug] exists = True
+[2/10] 10.mp4
+[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
+[debug] video_path = data\raw\10.mp4
+[debug] exists = True
+[3/10] 2.mp4
+[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
+[debug] video_path = data\raw\2.mp4
+[debug] exists = True
+[4/10] 3.mp4
+[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
+[debug] video_path = data\raw\3.mp4
+[debug] exists = True
+[5/10] 4.mp4
+[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
+[debug] video_path = data\raw\4.mp4
+[debug] exists = True
+[6/10] 5.mp4
+[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
+[debug] video_path = data\raw\5.mp4
+[debug] exists = True
+[7/10] 6.mp4
+[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
+[debug] video_path = data\raw\6.mp4
+[debug] exists = True
+[8/10] 7.mp4
+[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
+[debug] video_path = data\raw\7.mp4
+[debug] exists = True

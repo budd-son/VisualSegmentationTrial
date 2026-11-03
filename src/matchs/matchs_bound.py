@@ -4,44 +4,36 @@ from pathlib import Path
 
 
 class SceneEvaluator:
-    def __init__(self, tol_shots=1):
-        # Допуск в шотах, а не в секундах
-        self.tol_shots = tol_shots
+    def __init__(self):
+        pass
 
     @staticmethod
-    def _read_boundaries(csv_path, start_col, end_col):
+    def _read_boundaries(csv_path, start_col="start", end_col="end"):
         boundaries = []
+        if not Path(csv_path).exists():
+            return boundaries
         with open(csv_path, encoding="utf-8") as f:
             reader = csv.DictReader(f)
             rows = list(reader)
-
-        if not rows:
-            return boundaries
-
-        end_key = next((k for k in rows[0].keys() if k.startswith(end_col)), None)
-        if not end_key:
-            raise KeyError(f"Не найдена колонка {end_col} в {csv_path}")
-
-        for row in rows[:-1]:
-            boundaries.append(float(row[end_key]))
+            if not rows: return boundaries
+            ek = next((k for k in rows[0] if k.startswith(end_col)), None)
+            if not ek: raise KeyError(f"Нет колонки {end_col} в {csv_path}")
+            for row in rows[:-1]:
+                boundaries.append(float(row[ek]))
         return boundaries
 
     @staticmethod
     def _load_shots(shots_path):
-        """Загружает времена склеек (начало каждого шота)."""
         shots = []
         if not Path(shots_path).exists():
             return shots
-
         with open(shots_path, encoding="utf-8") as f:
-            reader = csv.reader(f)
-            for row in reader:
-                if not row: continue
+            for r in csv.reader(f):
                 try:
-                    shots.append(float(row[0]))  # Берем start_time
-                except ValueError:
-                    continue  # Пропускаем заголовок
-        return sorted(list(set(shots)))
+                    shots.append(float(r[0]))
+                except (ValueError, IndexError):
+                    pass
+        return sorted(set(shots))
 
     @staticmethod
     def _get_shot_idx(time, shots):
@@ -49,86 +41,73 @@ class SceneEvaluator:
         idx = bisect.bisect_left(shots, time)
         if idx == 0: return 0
         if idx == len(shots): return len(shots) - 1
-        # Смотрим, какой шот ближе: слева или справа
-        if shots[idx] - time < time - shots[idx - 1]:
-            return idx
-        return idx - 1
+        # Возвращаем индекс БЛИЖАЙШЕГО шота
+        return idx if shots[idx] - time < time - shots[idx - 1] else idx - 1
 
-    def _match(self, pred, gt, shots):
-        """Сопоставление границ по индексам шотов."""
-        pred = sorted(pred)
-        gt = sorted(gt)
-
-        # Переводим времена в индексы шотов
-        pred_idx = [self._get_shot_idx(p, shots) for p in pred]
-        gt_idx = [self._get_shot_idx(g, shots) for g in gt]
-
+    def _match(self, pred, gt, shots, tol_shots=0, tol_sec=0.0):
+        """Единая функция сопоставления (и по шотам, и по секундам)."""
+        tp = 0
         matched_gt = set()
-        matched_pred = set()
 
-        for i, p_i in enumerate(pred_idx):
-            best_j = None
-            best_dist = float("inf")
-            for j, g_i in enumerate(gt_idx):
-                if j in matched_gt:
-                    continue
+        if shots:
+            # Сопоставление по индексам шотов
+            pred_idx = [self._get_shot_idx(p, shots) for p in sorted(pred)]
+            gt_idx = [self._get_shot_idx(g, shots) for g in sorted(gt)]
 
-                # Сравниваем РАЗНИЦУ ИНДЕКСОВ, а не время
-                d = abs(p_i - g_i)
-                if d <= self.tol_shots and d < best_dist:
-                    best_dist = d
-                    best_j = j
+            for p_i in pred_idx:
+                best_j, best_d = None, 10 ** 9
+                for j, g_i in enumerate(gt_idx):
+                    if j in matched_gt: continue
+                    d = abs(p_i - g_i)
+                    if d < best_d:
+                        best_d, best_j = d, j
+                if best_d <= tol_shots:
+                    matched_gt.add(best_j)
+                    tp += 1
+        else:
+            # Фолбэк: сопоставление по секундам
+            for p in sorted(pred):
+                best_j, best_d = None, 10 ** 9
+                for j, g in enumerate(sorted(gt)):
+                    if j in matched_gt: continue
+                    d = abs(p - g)
+                    if d < best_d:
+                        best_d, best_j = d, j
+                if best_d <= tol_sec:
+                    matched_gt.add(best_j)
+                    tp += 1
 
-            if best_j is not None:
-                matched_pred.add(i)
-                matched_gt.add(best_j)
-
-        tp = len(matched_pred)
         fp = len(pred) - tp
         fn = len(gt) - tp
         return tp, fp, fn
 
-    def evaluate_file(self, gt_path, pred_path, shots_path):
-        # На скрине GT: start_sec, end_sec. В предсказаниях: start_time, end_time
-        gt_bounds = self._read_boundaries(gt_path, "start", "end")
-        pred_bounds = self._read_boundaries(pred_path, "start", "end")
-
-        shots = self._load_shots(shots_path)
-
-        tp, fp, fn = self._match(pred_bounds, gt_bounds, shots)
-
-        precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
-        recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
-        f1 = (2 * precision * recall / (precision + recall)
-              if (precision + recall) > 0 else 0.0)
-
-        return {
-            "gt_bounds": len(gt_bounds),
-            "pred_bounds": len(pred_bounds),
-            "tp": tp, "fp": fp, "fn": fn,
-            "precision": precision, "recall": recall, "f1": f1,
-        }
-
-    def evaluate_all(self, gt_dir, pred_dir, shots_dir):
-        gt_dir = Path(gt_dir)
-        pred_dir = Path(pred_dir)
-        shots_dir = Path(shots_dir)
-
+    def evaluate_all(self, gt_dir, pred_dir, shots_dir, tol_shots=0, tol_sec=0.0):
+        gt_dir, pred_dir, shots_dir = Path(gt_dir), Path(pred_dir), Path(shots_dir)
         results = {}
+
         for gt_path in sorted(gt_dir.glob("*.csv")):
-            name = gt_path.stem
-            pred_path = pred_dir / f"{name}_data.csv"
-            shots_path = shots_dir / f"{name}_shots.csv"
+            video = gt_path.stem
+            pred_path = pred_dir / f"{video}_data.csv"
+            shots_path = shots_dir / f"{video}_shots.csv"
+
+            gt_bounds = self._read_boundaries(str(gt_path), "start", "end")
+            shots = self._load_shots(str(shots_path))
 
             if not pred_path.exists():
-                print(f"[warn] нет prediction для {name}: {pred_path}")
-                continue
-            if not shots_path.exists():
-                print(f"[warn] нет шотов для {name}: {shots_path}")
-                continue
+                # Если предсказаний нет — все GT пропущены
+                tp, fp, fn = 0, 0, len(gt_bounds)
+            else:
+                pred_bounds = self._read_boundaries(str(pred_path), "start", "end")
+                tp, fp, fn = self._match(pred_bounds, gt_bounds, shots, tol_shots, tol_sec)
 
-            results[name] = self.evaluate_file(
-                str(gt_path), str(pred_path), str(shots_path)
-            )
+            p = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+            r = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+            f1 = 2 * p * r / (p + r) if (p + r) > 0 else 0.0
+
+            results[video] = {
+                "precision": p, "recall": r, "f1": f1,
+                "tp": tp, "fp": fp, "fn": fn,
+                "n_gt": len(gt_bounds), "n_pred": len(pred_bounds) if pred_path.exists() else 0
+            }
 
         return results
