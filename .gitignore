@@ -18,11 +18,10 @@ env/
 
 # Данные (видео и кэши — слишком тяжёлые для git)
 data/raw/
-data/shots/
-data/signatures_cache/
 data/speech/
 data/old/
-experiments/
+experiments/rai_scuola/raw
+experiments/rai_scuola/speech
 
 # Видео и модели
 *.mp4
