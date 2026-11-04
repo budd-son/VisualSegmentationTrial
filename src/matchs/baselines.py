@@ -81,6 +81,8 @@ def build(step=30.0):
             n += 1
 
     return n
+if __name__ == "__main__":
+    build()
 
 
 

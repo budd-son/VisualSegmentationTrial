@@ -9,30 +9,31 @@ from src.matchs.matchs_bound import SceneEvaluator
 
 
 def get_all_metrics(tolerance=0):
-    """Возвращает словарь {метод: {precision, recall, f1}} для всех папок result_*."""
+    """Возвращает {метод: {precision, recall, f1}} для всех папок result_*."""
     data_dir = PROJECT_ROOT / "data"
     gt_dir = str(data_dir / "ground_truth")
     shots_dir = str(data_dir / "shots")
 
-    # Ищем все папки result_*
     methods = {}
     for p in sorted(data_dir.glob("result_*")):
         if p.is_dir():
             method = p.name.replace("result_", "")
             methods[method] = str(p)
 
-    ev = SceneEvaluator(tol_shots=tolerance)
+    ev = SceneEvaluator()
     results = {}
 
     for method, pred_dir in methods.items():
-        # Считаем micro-метрики (по всему корпусу)
-        method_results = ev.evaluate_all(gt_dir, pred_dir, shots_dir)
+        res = ev.evaluate_all(
+            gt_dir=gt_dir,
+            pred_dir=pred_dir,
+            shots_dir=shots_dir,
+            tol_shots=tolerance  # <--- ПЕРЕДАЕМ ДОПУСК
+        )
 
-        tp = fp = fn = 0
-        for r in method_results.values():
-            tp += r.get("tp", 0)
-            fp += r.get("fp", 0)
-            fn += r.get("fn", 0)
+        tp = sum(r["tp"] for r in res.values())
+        fp = sum(r["fp"] for r in res.values())
+        fn = sum(r["fn"] for r in res.values())
 
         p = tp / (tp + fp) if (tp + fp) > 0 else 0.0
         r = tp / (tp + fn) if (tp + fn) > 0 else 0.0

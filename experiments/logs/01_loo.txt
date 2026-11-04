@@ -1,0 +1,54 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+C:\Users\Соня\PycharmProjects\VisualSegmentationTrial\.venv\Lib\site-packages\open_clip\factory.py:450: UserWarning: QuickGELU mismatch between final model config (quick_gelu=False) and pretrained tag 'openai' (quick_gelu=True).
+  warnings.warn(
+
+========== LOO для HSV ==========
+  1               | thr=0.65 | TP=4 FP=35 FN=2
+  10              | thr=0.40 | TP=5 FP=5 FN=10
+  2               | thr=0.40 | TP=5 FP=12 FN=6
+  3               | thr=0.65 | TP=7 FP=32 FN=8
+  4               | thr=0.40 | TP=8 FP=22 FN=13
+  5               | thr=0.40 | TP=0 FP=2 FN=12
+  6               | thr=0.65 | TP=1 FP=14 FN=3
+  7               | thr=0.40 | TP=2 FP=13 FN=6
+  8               | thr=0.40 | TP=4 FP=33 FN=7
+  9               | thr=0.40 | TP=6 FP=4 FN=7
+
+ИТОГО (LOO): P=0.20 R=0.36 F1=0.25 | Средний порог: 0.47
+
+========== LOO для CLIP ==========
+[CLIP] Загрузка модели (один раз)...
+  1               | thr=0.60 | TP=4 FP=35 FN=2
+  10              | thr=0.60 | TP=6 FP=6 FN=9
+  2               | thr=0.60 | TP=9 FP=17 FN=2
+  3               | thr=0.60 | TP=8 FP=29 FN=7
+  4               | thr=0.60 | TP=12 FP=27 FN=9
+  5               | thr=0.60 | TP=2 FP=5 FN=10
+  6               | thr=0.60 | TP=2 FP=16 FN=2
+  7               | thr=0.60 | TP=5 FP=35 FN=3
+  8               | thr=0.60 | TP=6 FP=44 FN=5
+  9               | thr=0.60 | TP=8 FP=5 FN=5
+
+ИТОГО (LOO): P=0.22 R=0.53 F1=0.31 | Средний порог: 0.60
+
+========== LOO для DINO ==========
+[DINO] Загрузка модели (один раз)...
+
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]
+Loading weights:   5%|▍         | 11/223 [00:00<00:02, 102.49it/s]
+Loading weights:  13%|█▎        | 30/223 [00:00<00:01, 140.37it/s]
+Loading weights:  20%|█▉        | 44/223 [00:00<00:01, 125.39it/s]
+Loading weights: 100%|██████████| 223/223 [00:00<00:00, 560.86it/s]
+  1               | thr=0.45 | TP=6 FP=27 FN=0
+  10              | thr=0.45 | TP=5 FP=7 FN=10
+  2               | thr=0.45 | TP=7 FP=15 FN=4
+  3               | thr=0.45 | TP=10 FP=21 FN=5
+  4               | thr=0.45 | TP=10 FP=17 FN=11
+  5               | thr=0.45 | TP=3 FP=2 FN=9
+  6               | thr=0.45 | TP=3 FP=5 FN=1
+  7               | thr=0.45 | TP=5 FP=29 FN=3
+  8               | thr=0.45 | TP=4 FP=43 FN=7
+  9               | thr=0.45 | TP=8 FP=4 FN=5
+
+ИТОГО (LOO): P=0.26 R=0.53 F1=0.35 | Средний порог: 0.45

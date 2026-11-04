@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "C:\Users\����\PycharmProjects\VisualSegmentationTrial\src\plot_run.py", line 7, in <module>
-    from src.utils.plotter import ScenePlotter
-ModuleNotFoundError: No module named 'src'

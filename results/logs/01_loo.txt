@@ -1,43 +1,138 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+C:\Users\Соня\PycharmProjects\VisualSegmentationTrial\.venv\Lib\site-packages\open_clip\factory.py:450: UserWarning: QuickGELU mismatch between final model config (quick_gelu=False) and pretrained tag 'openai' (quick_gelu=True).
+  warnings.warn(
 
 ========== LOO для HSV ==========
-  1               | thr=0.50 | TP=0 FP=1 FN=6
-  10              | thr=0.50 | TP=0 FP=0 FN=15
-  2               | thr=0.50 | TP=0 FP=1 FN=11
-  3               | thr=0.50 | TP=1 FP=3 FN=14
-  4               | thr=0.40 | TP=0 FP=0 FN=21
-  5               | thr=0.50 | TP=1 FP=1 FN=11
-  6               | thr=0.50 | TP=0 FP=0 FN=4
-  7               | thr=0.50 | TP=0 FP=0 FN=8
-  8               | thr=0.50 | TP=0 FP=0 FN=11
-  9               | thr=0.50 | TP=0 FP=0 FN=13
+  1000_Days       | thr=0.40 | TP=15 FP=30 FN=6
+  Boy_Who_Never_Slept | thr=0.40 | TP=12 FP=38 FN=23
+  CH7             | thr=0.40 | TP=28 FP=112 FN=15
+  Cosmos_Laundromat_-_First_Cycle_(1080p) | thr=0.40 | TP=3 FP=21 FN=3
+  ED_1024         | thr=0.40 | TP=4 FP=12 FN=4
+  Fires_Beneath_Water | thr=0.40 | TP=9 FP=19 FN=52
+  Honey           | thr=0.40 | TP=3 FP=9 FN=16
+  Jathias_Wager   | thr=0.40 | TP=9 FP=16 FN=5
+  La_Chute_dune_Plume | thr=0.40 | TP=1 FP=18 FN=8
+  Lord_Meia       | thr=0.40 | TP=0 FP=4 FN=26
+  Meridian        | thr=0.40 | TP=3 FP=4 FN=5
+  Oceania         | thr=0.40 | TP=16 FP=27 FN=14
+  Pentagon        | thr=0.40 | TP=0 FP=0 FN=30
+  Route_66        | thr=0.40 | TP=14 FP=56 FN=40
+  Seven_Dead_Men  | thr=0.40 | TP=16 FP=16 FN=17
+  Sita_Sings_the_Blues | thr=0.40 | TP=28 FP=119 FN=23
+  Star_Wreck      | thr=0.40 | TP=33 FP=139 FN=21
+  Valkaama_1080_p | thr=0.40 | TP=28 FP=25 FN=22
+  big_buck_bunny_480p_stereo | thr=0.40 | TP=5 FP=24 FN=9
+  sintel-1024-surround | thr=0.40 | TP=4 FP=9 FN=3
+  tears_of_steel_1080p | thr=0.40 | TP=5 FP=28 FN=5
 
-ИТОГО (LOO): P=0.25 R=0.02 F1=0.03 | Средний порог: 0.49
+ИТОГО (LOO): P=0.25 R=0.40 F1=0.31 | Средний порог: 0.40
 
 ========== LOO для CLIP ==========
-  1               | thr=0.65 | TP=4 FP=35 FN=2
-  10              | thr=0.60 | TP=6 FP=6 FN=9
-  2               | thr=0.65 | TP=9 FP=17 FN=2
-  3               | thr=0.60 | TP=6 FP=32 FN=9
-  4               | thr=0.65 | TP=11 FP=29 FN=10
-  5               | thr=0.65 | TP=2 FP=5 FN=10
-  6               | thr=0.65 | TP=4 FP=18 FN=0
-  7               | thr=0.65 | TP=6 FP=36 FN=2
-  8               | thr=0.60 | TP=6 FP=44 FN=5
-  9               | thr=0.65 | TP=8 FP=5 FN=5
+[CLIP] Загрузка модели (один раз)...
+  1000_Days       | thr=0.60 | TP=14 FP=142 FN=7
+  Boy_Who_Never_Slept | thr=0.60 | TP=21 FP=74 FN=14
+  CH7             | thr=0.60 | TP=26 FP=315 FN=17
+  Cosmos_Laundromat_-_First_Cycle_(1080p) | thr=0.60 | TP=3 FP=31 FN=3
+  ED_1024         | thr=0.60 | TP=3 FP=43 FN=5
+  Fires_Beneath_Water | thr=0.60 | TP=30 FP=177 FN=31
+  Honey           | thr=0.60 | TP=8 FP=87 FN=11
+  Jathias_Wager   | thr=0.60 | TP=7 FP=24 FN=7
+  La_Chute_dune_Plume | thr=0.60 | TP=3 FP=32 FN=6
+  Lord_Meia       | thr=0.60 | TP=0 FP=7 FN=26
+  Meridian        | thr=0.60 | TP=5 FP=29 FN=3
+  Oceania         | thr=0.60 | TP=13 FP=70 FN=17
+  Pentagon        | thr=0.60 | TP=17 FP=44 FN=13
+  Route_66        | thr=0.60 | TP=31 FP=267 FN=23
+  Seven_Dead_Men  | thr=0.60 | TP=19 FP=30 FN=14
+  Sita_Sings_the_Blues | thr=0.60 | TP=28 FP=194 FN=23
+  Star_Wreck      | thr=0.60 | TP=27 FP=407 FN=27
+  Valkaama_1080_p | thr=0.60 | TP=30 FP=130 FN=20
+  big_buck_bunny_480p_stereo | thr=0.60 | TP=6 FP=39 FN=8
+  sintel-1024-surround | thr=0.60 | TP=4 FP=58 FN=3
+  tears_of_steel_1080p | thr=0.60 | TP=6 FP=52 FN=4
 
-ИТОГО (LOO): P=0.21 R=0.53 F1=0.31 | Средний порог: 0.64
+ИТОГО (LOO): P=0.12 R=0.52 F1=0.19 | Средний порог: 0.60
 
 ========== LOO для DINO ==========
-  1               | thr=0.45 | TP=6 FP=27 FN=0
-  10              | thr=0.45 | TP=6 FP=6 FN=9
-  2               | thr=0.45 | TP=7 FP=15 FN=4
-  3               | thr=0.45 | TP=7 FP=22 FN=8
-  4               | thr=0.45 | TP=9 FP=18 FN=12
-  5               | thr=0.45 | TP=3 FP=2 FN=9
-  6               | thr=0.45 | TP=3 FP=5 FN=1
-  7               | thr=0.40 | TP=4 FP=25 FN=4
-  8               | thr=0.45 | TP=4 FP=43 FN=7
-  9               | thr=0.45 | TP=8 FP=3 FN=5
+[DINO] Загрузка модели (один раз)...
 
-ИТОГО (LOO): P=0.26 R=0.49 F1=0.34 | Средний порог: 0.45
-[0m
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]
+Loading weights:   5%|▍         | 11/223 [00:00<00:02, 94.63it/s]
+Loading weights:   9%|▉         | 21/223 [00:00<00:02, 89.59it/s]
+Loading weights:  14%|█▍        | 31/223 [00:00<00:02, 93.29it/s]
+Loading weights: 100%|██████████| 223/223 [00:00<00:00, 655.03it/s]
+  1000_Days       | thr=0.40 | TP=15 FP=66 FN=6
+  Boy_Who_Never_Slept | thr=0.40 | TP=20 FP=55 FN=15
+  CH7             | thr=0.40 | TP=24 FP=227 FN=19
+  Cosmos_Laundromat_-_First_Cycle_(1080p) | thr=0.40 | TP=3 FP=26 FN=3
+  ED_1024         | thr=0.40 | TP=6 FP=27 FN=2
+  Fires_Beneath_Water | thr=0.40 | TP=25 FP=109 FN=36
+  Honey           | thr=0.40 | TP=9 FP=56 FN=10
+  Jathias_Wager   | thr=0.40 | TP=7 FP=19 FN=7
+  La_Chute_dune_Plume | thr=0.40 | TP=2 FP=30 FN=7
+  Lord_Meia       | thr=0.40 | TP=0 FP=6 FN=26
+  Meridian        | thr=0.40 | TP=4 FP=7 FN=4
+  Oceania         | thr=0.40 | TP=13 FP=56 FN=17
+  Pentagon        | thr=0.40 | TP=16 FP=26 FN=14
+  Route_66        | thr=0.40 | TP=31 FP=163 FN=23
+  Seven_Dead_Men  | thr=0.40 | TP=19 FP=18 FN=14
+  Sita_Sings_the_Blues | thr=0.40 | TP=25 FP=127 FN=26
+  Star_Wreck      | thr=0.40 | TP=32 FP=280 FN=22
+  Valkaama_1080_p | thr=0.40 | TP=22 FP=76 FN=28
+  big_buck_bunny_480p_stereo | thr=0.40 | TP=9 FP=32 FN=5
+  sintel-1024-surround | thr=0.40 | TP=4 FP=45 FN=3
+  tears_of_steel_1080p | thr=0.40 | TP=6 FP=38 FN=4
+
+ИТОГО (LOO): P=0.16 R=0.50 F1=0.25 | Средний порог: 0.40
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[h264 @ 000002c99781d980] mmco: unref short failure
+[mpeg4 @ 000002c9a42a00c0] warning: first frame is no keyframe
+[mpeg4 @ 000002c9a42a00c0] warning: first frame is no keyframe
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[h264 @ 000002c9a5cfc800] mmco: unref short failure
+[mpeg4 @ 000002c9a3cb0680] warning: first frame is no keyframe
+[mpeg4 @ 000002c9a3cb0680] warning: first frame is no keyframe
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[h264 @ 000002c9a3c7a300] mmco: unref short failure
+[mpeg4 @ 000002c9a5fc6ec0] warning: first frame is no keyframe
+[mpeg4 @ 000002c9a5fc6ec0] warning: first frame is no keyframe

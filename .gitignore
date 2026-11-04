@@ -16,12 +16,22 @@ env/
 # Jupyter
 .ipynb_checkpoints/
 
-# Данные (видео и результаты — слишком тяжёлые для git)
-data/raw/*
-data/old/*
+# Данные (видео и кэши — слишком тяжёлые для git)
+data/raw/
+data/shots/
+data/signatures_cache/
+data/speech/
+data/old/
+experiments/
 
-
-# Модели и кеши
+# Видео и модели
+*.mp4
+*.avi
+*.mkv
+*.mov
+*.webm
+*.flv
+*.pkl
 *.safetensors
 *.ckpt
 *.pth
@@ -31,18 +41,12 @@ data/old/*
 .DS_Store
 Thumbs.db
 
-# Кэши и промежуточные данные
-data/signatures_cache/
-data/old_signatures_cache/
-data/old_shots/
-data/shots/
-*.pkl
-*.csv
-*.mp4
-*.avi
-*.mkv
-*.mov
-
-# Но разрешаем коммитить разметку и итоговые предсказания
+# НЕ игнорируем разметку (она маленькая и нужна для воспроизводимости)
+!data/ground_truth/
 !data/ground_truth/*.csv
-!data/result_*/*.csv
+
+# НЕ игнорируем результаты оценки (логи и графики)
+!results/
+!results/logs/
+!results/*.png
+!results/*.txt

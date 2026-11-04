@@ -1,34 +1,139 @@
+INFO:root:Parsing model identifier. Schema: None, Identifier: ViT-B-32
+INFO:root:Loaded built-in ViT-B-32 model config.
+INFO:httpx:HTTP Request: HEAD https://huggingface.co/timm/vit_base_patch32_clip_224.openai/resolve/main/open_clip_model.safetensors "HTTP/1.1 302 Found"
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+C:\Users\Соня\PycharmProjects\VisualSegmentationTrial\.venv\Lib\site-packages\open_clip\factory.py:450: UserWarning: QuickGELU mismatch between final model config (quick_gelu=False) and pretrained tag 'openai' (quick_gelu=True).
+  warnings.warn(
+INFO:root:Instantiating model architecture: CLIP
+INFO:root:Loading full pretrained weights from: C:\Users\Соня\.cache\huggingface\hub\models--timm--vit_base_patch32_clip_224.openai\snapshots\a6f597a30f7b82c51704746581f9a4e41421e878\open_clip_model.safetensors
+INFO:root:Final image preprocessing configuration set: {'size': (224, 224), 'mode': 'RGB', 'mean': (0.48145466, 0.4578275, 0.40821073), 'std': (0.26862954, 0.26130258, 0.27577711), 'interpolation': 'bicubic', 'resize_mode': 'shortest', 'fill_color': 0}
+INFO:root:Model ViT-B-32 creation process complete.
+INFO:httpx:HTTP Request: GET https://huggingface.co/api/models/facebook/dinov2-base "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://huggingface.co/api/models/facebook/dinov2-base "HTTP/1.1 200 OK"
 
 ===== HSV =====
-[1/10] 1.mp4
-[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
-[debug] video_path = data\raw\1.mp4
-[debug] exists = True
-[2/10] 10.mp4
-[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
-[debug] video_path = data\raw\10.mp4
-[debug] exists = True
-[3/10] 2.mp4
-[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
-[debug] video_path = data\raw\2.mp4
-[debug] exists = True
-[4/10] 3.mp4
-[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
-[debug] video_path = data\raw\3.mp4
-[debug] exists = True
-[5/10] 4.mp4
-[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
-[debug] video_path = data\raw\4.mp4
-[debug] exists = True
-[6/10] 5.mp4
-[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
-[debug] video_path = data\raw\5.mp4
-[debug] exists = True
-[7/10] 6.mp4
-[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
-[debug] video_path = data\raw\6.mp4
-[debug] exists = True
-[8/10] 7.mp4
-[debug] cwd = C:\Users\Соня\PycharmProjects\VisualSegmentationTrial
-[debug] video_path = data\raw\7.mp4
-[debug] exists = True
+[1/21] 1000_Days.mov
+[2/21] big_buck_bunny_480p_stereo.avi
+[3/21] Boy_Who_Never_Slept.mp4
+[4/21] CH7.mp4
+[5/21] Cosmos_Laundromat_-_First_Cycle_(1080p).mp4
+[6/21] ED_1024.avi
+[7/21] Fires_Beneath_Water.avi
+[8/21] Honey.mp4
+[9/21] Jathias_Wager.mp4
+[10/21] La_Chute_dune_Plume.mp4
+[11/21] Lord_Meia.mp4
+[12/21] Meridian.mp4
+[13/21] Oceania.avi
+[14/21] Pentagon.avi
+[15/21] Route_66.avi
+[16/21] Seven_Dead_Men.mp4
+[17/21] sintel-1024-surround.mp4
+[18/21] Sita_Sings_the_Blues.mp4
+[19/21] Star_Wreck.mp4
+[20/21] tears_of_steel_1080p.mp4
+[21/21] Valkaama_1080_p.mp4
+
+===== CLIP =====
+[1/21] 1000_Days.mov
+[CLIP] Загрузка модели (один раз)...
+[2/21] big_buck_bunny_480p_stereo.avi
+[3/21] Boy_Who_Never_Slept.mp4
+[4/21] CH7.mp4
+[5/21] Cosmos_Laundromat_-_First_Cycle_(1080p).mp4
+[6/21] ED_1024.avi
+[7/21] Fires_Beneath_Water.avi
+[8/21] Honey.mp4
+[9/21] Jathias_Wager.mp4
+[10/21] La_Chute_dune_Plume.mp4
+[11/21] Lord_Meia.mp4
+[12/21] Meridian.mp4
+[13/21] Oceania.avi
+[14/21] Pentagon.avi
+[15/21] Route_66.avi
+[16/21] Seven_Dead_Men.mp4
+[17/21] sintel-1024-surround.mp4
+[18/21] Sita_Sings_the_Blues.mp4
+[19/21] Star_Wreck.mp4
+[20/21] tears_of_steel_1080p.mp4
+[21/21] Valkaama_1080_p.mp4
+
+===== DINO =====
+[1/21] 1000_Days.mov
+[DINO] Загрузка модели (один раз)...
+
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]
+Loading weights:  12%|█▏        | 26/223 [00:00<00:00, 259.32it/s]
+Loading weights: 100%|██████████| 223/223 [00:00<00:00, 1121.56it/s]
+[2/21] big_buck_bunny_480p_stereo.avi
+[3/21] Boy_Who_Never_Slept.mp4
+[4/21] CH7.mp4
+[5/21] Cosmos_Laundromat_-_First_Cycle_(1080p).mp4
+[6/21] ED_1024.avi
+[7/21] Fires_Beneath_Water.avi
+[8/21] Honey.mp4
+[9/21] Jathias_Wager.mp4
+[10/21] La_Chute_dune_Plume.mp4
+[11/21] Lord_Meia.mp4
+[12/21] Meridian.mp4
+[13/21] Oceania.avi
+[14/21] Pentagon.avi
+[15/21] Route_66.avi
+[16/21] Seven_Dead_Men.mp4
+[17/21] sintel-1024-surround.mp4
+[18/21] Sita_Sings_the_Blues.mp4
+[19/21] Star_Wreck.mp4
+[20/21] tears_of_steel_1080p.mp4
+[21/21] Valkaama_1080_p.mp4
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[h264 @ 000001aae67cb040] mmco: unref short failure
+[mpeg4 @ 000001aae3978bc0] warning: first frame is no keyframe
+[mpeg4 @ 000001aae3978bc0] warning: first frame is no keyframe
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[h264 @ 000001aae527a940] mmco: unref short failure
+[mpeg4 @ 000001aae4e11340] warning: first frame is no keyframe
+[mpeg4 @ 000001aae4e11340] warning: first frame is no keyframe
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[h264 @ 000001aae892d9c0] mmco: unref short failure
+[mpeg4 @ 000001aae6f62100] warning: first frame is no keyframe
+[mpeg4 @ 000001aae6f62100] warning: first frame is no keyframe

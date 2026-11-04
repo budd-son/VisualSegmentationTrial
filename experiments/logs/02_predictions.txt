@@ -1,0 +1,54 @@
+INFO:root:Parsing model identifier. Schema: None, Identifier: ViT-B-32
+INFO:root:Loaded built-in ViT-B-32 model config.
+INFO:httpx:HTTP Request: HEAD https://huggingface.co/timm/vit_base_patch32_clip_224.openai/resolve/main/open_clip_model.safetensors "HTTP/1.1 302 Found"
+C:\Users\Соня\PycharmProjects\VisualSegmentationTrial\.venv\Lib\site-packages\open_clip\factory.py:450: UserWarning: QuickGELU mismatch between final model config (quick_gelu=False) and pretrained tag 'openai' (quick_gelu=True).
+  warnings.warn(
+INFO:root:Instantiating model architecture: CLIP
+INFO:root:Loading full pretrained weights from: C:\Users\Соня\.cache\huggingface\hub\models--timm--vit_base_patch32_clip_224.openai\snapshots\a6f597a30f7b82c51704746581f9a4e41421e878\open_clip_model.safetensors
+INFO:root:Final image preprocessing configuration set: {'size': (224, 224), 'mode': 'RGB', 'mean': (0.48145466, 0.4578275, 0.40821073), 'std': (0.26862954, 0.26130258, 0.27577711), 'interpolation': 'bicubic', 'resize_mode': 'shortest', 'fill_color': 0}
+INFO:root:Model ViT-B-32 creation process complete.
+INFO:httpx:HTTP Request: GET https://huggingface.co/api/models/facebook/dinov2-base "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://huggingface.co/api/models/facebook/dinov2-base "HTTP/1.1 200 OK"
+
+===== HSV =====
+[1/10] 1.mp4
+[2/10] 10.mp4
+[3/10] 2.mp4
+[4/10] 3.mp4
+[5/10] 4.mp4
+[6/10] 5.mp4
+[7/10] 6.mp4
+[8/10] 7.mp4
+[9/10] 8.mp4
+[10/10] 9.mp4
+
+===== CLIP =====
+[1/10] 1.mp4
+[CLIP] Загрузка модели (один раз)...
+[2/10] 10.mp4
+[3/10] 2.mp4
+[4/10] 3.mp4
+[5/10] 4.mp4
+[6/10] 5.mp4
+[7/10] 6.mp4
+[8/10] 7.mp4
+[9/10] 8.mp4
+[10/10] 9.mp4
+
+===== DINO =====
+[1/10] 1.mp4
+[DINO] Загрузка модели (один раз)...
+
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]
+Loading weights:   6%|▌         | 13/223 [00:00<00:01, 120.94it/s]
+Loading weights:  18%|█▊        | 40/223 [00:00<00:00, 205.70it/s]
+Loading weights: 100%|██████████| 223/223 [00:00<00:00, 781.43it/s]
+[2/10] 10.mp4
+[3/10] 2.mp4
+[4/10] 3.mp4
+[5/10] 4.mp4
+[6/10] 5.mp4
+[7/10] 6.mp4
+[8/10] 7.mp4
+[9/10] 8.mp4
+[10/10] 9.mp4

@@ -41,8 +41,14 @@ def multi_embedding_similarity(embs_a, embs_b):
 
 def similarity(sig1, sig2, method="hsv"):
     if method == "hsv":
-        return hist_similarity(sig1, sig2)
-    elif method in ("clip", "dino"):
-        return multi_embedding_similarity(sig1, sig2)
+        if not sig1 or not sig2:
+            return 0.0
+        best = 0.0
+        for h1 in sig1:
+            for h2 in sig2:
+                score = float(np.minimum(h1, h2).sum())
+                if score > best:
+                    best = score
+        return best
     else:
-        raise ValueError(f"Unknown method: {method}")
+        return multi_embedding_similarity(sig1, sig2)

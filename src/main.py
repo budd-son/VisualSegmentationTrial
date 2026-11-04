@@ -60,9 +60,6 @@ def process_one(video_path, out_dir, cfg, method="hsv", mode="fixed", k_val=None
         sig_kwargs = dict(frame_step=cfg.signature.clip.frame_step)
     elif method == "dino":
         sig_kwargs = dict(frame_step=cfg.signature.dino.frame_step)
-    print(f"[debug] cwd = {os.getcwd()}")
-    print(f"[debug] video_path = {video_path}")
-    print(f"[debug] exists = {Path(video_path).exists()}")
     shots_with_sigs = shot_signature(video_path, shots, method=method, **sig_kwargs)
 
     shots_with_sigs = [s for s in shots_with_sigs if s.get("signature") is not None]

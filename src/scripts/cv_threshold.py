@@ -72,8 +72,15 @@ def main():
 
     for method in ["hsv", "clip", "dino"]:
         print(f"\n========== LOO для {method.upper()} ==========")
-        sigs_cache = {v: get_sigs(raw_dir / f"{v}.mp4", method) for v in videos if (raw_dir / f"{v}.mp4").exists()}
-
+        sigs_cache = {}
+        for v in videos:
+            matches = list(raw_dir.glob(f"{v}.*"))
+            if not matches:
+                continue
+            video_path = matches[0]  # Берем реальный путь (например, .mov, .avi)
+            sigs = get_sigs(video_path, method)
+            if sigs:
+                sigs_cache[v] = sigs
         loo_tp, loo_fp, loo_fn = 0, 0, 0
         chosen_thr = []
 
